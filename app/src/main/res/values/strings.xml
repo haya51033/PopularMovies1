@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="api_key">a251c89afdfec4cfb13d71567d48f13a</string>
     <string name="sort_popular">Sort by Most Popular</string>
     <string name="sort_rating">Sort by Top Rated</string>
 </resources>
