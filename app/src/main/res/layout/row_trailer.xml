@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/play"
+        android:layout_margin="10dip"
+        android:background="@drawable/ic_play_circle_outline_black_24dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:id="@+id/tv_MovieTrailer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:padding="16dp"/>
+
+</LinearLayout>
