@@ -9,7 +9,10 @@ package com.example.android.popularmovies.Models;
 
         import java.util.List;
 
-public class ResponseValue {
+        import io.realm.RealmList;
+        import io.realm.RealmObject;
+
+public class ResponseValue  extends RealmObject {
 
     @SerializedName("page")
     @Expose
@@ -23,16 +26,16 @@ public class ResponseValue {
 
     @SerializedName("results")
     @Expose
-    private List<Movie> movies = null;
+    private RealmList<Movie> movies = null;
 
     public Integer getPage() {
         return page;
     }
-    public List<Movie> getMovies() {
+    public RealmList<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(List<Movie> movies) {
+    public void setMovies(RealmList<Movie> movies) {
         this.movies = movies;
     }
 

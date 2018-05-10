@@ -7,11 +7,13 @@ package com.example.android.popularmovies.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
 
 
 /** Note:
@@ -21,7 +23,7 @@ import com.google.gson.annotations.SerializedName;
  * I pass movie Item from Main Activity to the details Activity when press on the movie
  */
 
-public class Movie implements Parcelable, Serializable {
+public class Movie extends RealmObject implements Parcelable {
 
     @SerializedName("vote_count")
     @Expose
@@ -52,7 +54,7 @@ public class Movie implements Parcelable, Serializable {
     private String originalTitle;
     @SerializedName("genre_ids")
     @Expose
-    private List<Integer> genreIds = null;
+    private RealmList<Integer> genreIds = null;
     @SerializedName("backdrop_path")
     @Expose
     private String backdropPath;
@@ -66,6 +68,7 @@ public class Movie implements Parcelable, Serializable {
     @Expose
     private String releaseDate;
 
+    public Movie(){}
     public Integer getVoteCount() {
         return voteCount;
     }
@@ -138,11 +141,11 @@ public class Movie implements Parcelable, Serializable {
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
+    public RealmList<Integer> getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
+    public void setGenreIds(RealmList<Integer> genreIds) {
         this.genreIds = genreIds;
     }
 
@@ -191,7 +194,7 @@ public class Movie implements Parcelable, Serializable {
         originalLanguage = in.readString();
         originalTitle = in.readString();
         if (in.readByte() == 0x01) {
-            genreIds = new ArrayList<Integer>();
+            genreIds = new RealmList<Integer>();
             in.readList(genreIds, Integer.class.getClassLoader());
         } else {
             genreIds = null;

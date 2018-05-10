@@ -55,7 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="8dp"
+                android:id="@+id/firstone">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,7 +66,8 @@
                         android:layout_height="wrap_content"
                         android:text="Title: "
                         android:id="@+id/test"
-                        android:textColor="#000000"/>
+                        android:textColor="@android:color/black"
+                        />
                     <TextView
                         android:id="@+id/tv_movie_title"
                         android:layout_width="match_parent"
@@ -84,7 +86,7 @@
                         android:layout_height="wrap_content"
                         android:text="Language: "
                         android:id="@+id/test1"
-                        android:textColor="#000000"/>
+                        android:textColor="@android:color/black"/>
                     <TextView
                         android:id="@+id/tv_movie_lang"
                         android:layout_width="match_parent"
@@ -102,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:text="Rating: "
                         android:id="@+id/test2"
-                        android:textColor="#000000"/>
+                        android:textColor="@android:color/black"/>
                     <TextView
                         android:id="@+id/tv_movie_rating"
                         android:layout_width="wrap_content"
@@ -119,7 +121,7 @@
                         android:layout_height="wrap_content"
                         android:text="Release Date: "
                         android:id="@+id/test3"
-                        android:textColor="#000000"/>
+                        android:textColor="@android:color/black"/>
                     <TextView
                         android:id="@+id/tv_movie_year"
                         android:layout_width="wrap_content"
@@ -127,6 +129,14 @@
                         android:padding="8dp"
                         tools:text="2015" />
                 </LinearLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save as Favorite"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                   android:clickable="true"
+                    android:id="@+id/saveAsFv_button"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -136,7 +146,7 @@
                         android:layout_height="wrap_content"
                         android:text="Overview: "
                         android:id="@+id/test4"
-                        android:textColor="#000000"/>
+                        android:textColor="@android:color/black"/>
                     <TextView
                         android:id="@+id/tv_movie_overview"
                         android:layout_width="match_parent"
@@ -144,7 +154,54 @@
                         android:padding="8dp"
                         tools:text="Katniss Everdeen and Peeta Mellark become targets of the Capitol after their victory in the 74th Hunger Games sparks a rebellion in the Districts of Panem. " />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#c99586b1"
+                    android:id="@+id/trailerTitle"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="Trailers"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/firstone"
+                    android:id="@+id/secondLayout">
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rv_trailer">
+                    </android.support.v7.widget.RecyclerView>
+                </RelativeLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#c9895ce2"
+                    android:textStyle="bold"
+                    android:id="@+id/reviewTitle"
+                    android:textSize="20dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="Reviews"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/secondLayout">
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rv_reviews">
+                    </android.support.v7.widget.RecyclerView>
+                </RelativeLayout>
+
             </LinearLayout>
+
+
+
         </LinearLayout>
+
     </ScrollView>
 </LinearLayout>
