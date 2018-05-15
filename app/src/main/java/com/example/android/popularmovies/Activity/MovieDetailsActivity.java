@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,25 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.popularmovies.Adapter.MoviesAdapter;
 import com.example.android.popularmovies.Adapter.ReviewAdapter;
 import com.example.android.popularmovies.Adapter.TrailerAdapter;
 import com.example.android.popularmovies.Models.Movie;
 import com.example.android.popularmovies.Models.Reviews;
 import com.example.android.popularmovies.Models.ReviewsResponceValue;
+import com.example.android.popularmovies.Models.TrailerResponceValue;
 import com.example.android.popularmovies.Models.Videos;
-import com.example.android.popularmovies.MyAPI.ApiActivity;
-import com.example.android.popularmovies.MyAPI.IApi;
 import com.example.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.realm.Realm;
+
 
 /**
  * Created by haya on 20/04/2018.
@@ -63,12 +57,16 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
     TextView tv_content;
     Videos video;
     Reviews reviews;
+    ReviewsResponceValue reviewsResponceValue;
+    TrailerResponceValue trailer;
     TrailerAdapter trailerAdapter;
     ReviewAdapter reviewAdapter;
+    ArrayList<Movie> Object;
     ArrayList<Videos> Object1;
     ArrayList<Reviews> Object2;
-
-
+    ArrayList<TrailerResponceValue> Object3;
+    ArrayList<ReviewsResponceValue> Object4;
+    int movieID;
     RecyclerView trailerRV;
     RecyclerView reviewRV;
 
@@ -80,34 +78,56 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         trailerRV = (RecyclerView) findViewById(R.id.rv_trailer);
         reviewRV = (RecyclerView)findViewById(R.id.rv_reviews);
 
-      //  mGridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
         trailerRV.setLayoutManager(new LinearLayoutManager(this));
         reviewRV.setLayoutManager(new LinearLayoutManager(this));
 
+        Object = new ArrayList<>();
+        Object1 = new ArrayList<>();
+        Object2 = new ArrayList<>();
+        Object3 = new ArrayList<>();
+        Object4 = new ArrayList<>();
 
+        movie = new Movie();
+        video = new Videos();
+        trailer = new TrailerResponceValue();
+        reviews = new Reviews();
         Intent intent = getIntent();
         Bundle args = intent.getBundleExtra("BUNDLE");
 
-        ArrayList<Movie> Object = (ArrayList<Movie>) args.getSerializable("MovieList");
-        if (Object!=null)
+
+
+        Object1 = (ArrayList<Videos>) args.getSerializable("VideosList");
+        if (Object1.size() != 0)
+        {
+            video = Object1.get(0);
+            trailerTit = (TextView)findViewById(R.id.trailerTitle);
+        }
+         Object2 = (ArrayList<Reviews>) args.getSerializable("ReviewsList");
+        if (Object2.size() !=0)
+        {
+            reviews = Object2.get(0);
+            reviewTit = (TextView)findViewById(R.id.reviewTitle);
+        }
+
+        Object3 = (ArrayList<TrailerResponceValue>) args.getSerializable("TrailerResult");
+         if(Object3.size() !=0)
+         {
+             trailer = Object3.get(0);
+         }
+
+        Object = (ArrayList<Movie>) args.getSerializable("MovieList");
+        if (Object.size() != 0)
         {
             movie = Object.get(0);
         }
 
-        Object1 = (ArrayList<Videos>) args.getSerializable("VideosList");
-        if (Object1!=null)
+        Object4 = (ArrayList<ReviewsResponceValue>) args.getSerializable("ReviewResultList");
+        if(Object4.size() != 0)
         {
-            video = Object1.get(0);
+            reviewsResponceValue = Object4.get(0);
         }
 
-        Object2 = (ArrayList<Reviews>) args.getSerializable("ReviewsList");
-        if (Object2!=null)
-        {
-            reviews = Object2.get(0);
-        }
-
-
-
+        movieID = movie.getId();
 
         String url = "http://image.tmdb.org/t/p/original/";
         mTitleTextView = (TextView)findViewById(R.id.tv_movie_title);
@@ -125,9 +145,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         tv_MovieTrailer = (TextView)findViewById(R.id.tv_MovieTrailer);
         tv_content = (TextView)findViewById(R.id.tv_content);
         tv_outher = (TextView)findViewById(R.id.tv_author);
-        reviewTit = (TextView)findViewById(R.id.reviewTitle);
-        trailerTit = (TextView)findViewById(R.id.trailerTitle);
-
 
         if (movie != null)
         {
@@ -143,21 +160,82 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             Picasso.with(getApplicationContext()).load(url+img1).into(mPosterImageViewBack);
             Picasso.with(getApplicationContext()).load(url+img2).into(mPosterImageView);
 
-            configureRecyclerView(Object1);
+            ArrayList<Videos> tes = new ArrayList<>();
+            tes.addAll(Object1);
+            configureRecyclerView(tes);
             configureRecyclerView2(Object2);
+
+
+
+            Realm.init(getApplicationContext());
+            final Realm realm33 = Realm.getDefaultInstance();
+            realm33.beginTransaction();
+            Movie movie3 = realm33.where(Movie.class).equalTo("id",movieID).findFirst();
+            realm33.commitTransaction();
             saveAsFavoButton = (Button) findViewById(R.id.saveAsFv_button);
 
-            saveAsFavoButton.setOnClickListener( new View.OnClickListener() {
+            if(movie3 != null)
+            {
+                saveAsFavoButton.setVisibility(View.GONE);
+            }
+            else {
+                saveAsFavoButton.setOnClickListener( new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),"Button clicked..", Toast.LENGTH_LONG).show();
-                }
-            });
+
+                    @Override
+                    public void onClick(View v) {
+
+                       try
+                       {
+                           // save movie info
+                           Realm.init(getApplicationContext());
+                           Realm realm;
+                           realm = Realm.getDefaultInstance();
+                           realm.beginTransaction();
+                           Movie movie1 = movie;
+                           if (movie1 != null) {
+                               realm.copyToRealm(movie1);
+                           }
+                           realm.commitTransaction();
+
+
+                           Realm realm11;
+                           realm11 = Realm.getDefaultInstance();
+                           realm11.beginTransaction();
+                           TrailerResponceValue trailerResponceValue1 = trailer;
+                           if(trailerResponceValue1 != null)
+                           {
+                               realm11.copyToRealm(trailerResponceValue1);
+                           }
+                           realm11.commitTransaction();
+
+
+                           Realm realm9;
+                           realm9 = Realm.getDefaultInstance();
+                           realm9.beginTransaction();
+                           ReviewsResponceValue reviewsResponceValue1 = reviewsResponceValue;
+                           if (reviewsResponceValue1 != null) {
+                               realm9.copyToRealm(reviewsResponceValue1);
+
+                           }
+                           realm9.commitTransaction();
+
+                       }
+                       catch (Exception e)
+                       {
+                           Toast.makeText(getApplicationContext(),"Error saving..", Toast.LENGTH_LONG).show();
+
+                       }
+                       finally {
+                           Toast.makeText(getApplicationContext(),"Movie saved successfully..", Toast.LENGTH_LONG).show();
+                       }
+                    }
+                });
+
+            }
         }
-
-
     }
+
 
     private void configureRecyclerView(ArrayList videos) {
         trailerRV =(RecyclerView) findViewById(R.id.rv_trailer);
@@ -167,6 +245,9 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         trailerAdapter = new TrailerAdapter(this);
         trailerAdapter.setVideoData(videos);
         trailerRV.setAdapter(trailerAdapter);
+
+
+
     }
     private void configureRecyclerView2(ArrayList reviews) {
         reviewRV =(RecyclerView) findViewById(R.id.rv_reviews);
@@ -190,8 +271,5 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
     }
 
-    /*public void saveAsFavorite(View view)
-    {
-        Toast.makeText(getApplicationContext(),"Button clicked..", Toast.LENGTH_LONG).show();
-    }*/
+
 }

@@ -64,7 +64,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Title: "
+                        android:text="@string/titleMovie"
                         android:id="@+id/test"
                         android:textColor="@android:color/black"
                         />
@@ -75,7 +75,7 @@
                         android:padding="16dp"
                         android:textSize="20sp"
                         android:textColor="@color/colorPrimaryDark"
-                        tools:text="The Hunger Games" />
+                        tools:text="@string/movieTitelContent" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Language: "
+                        android:text="@string/LanguageMovie"
                         android:id="@+id/test1"
                         android:textColor="@android:color/black"/>
                     <TextView
@@ -92,7 +92,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textStyle="italic"
-                        tools:text="English"
+                        tools:text="@string/english"
                         android:padding="8dp" />
                 </LinearLayout>
                 <LinearLayout
@@ -102,14 +102,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rating: "
+                        android:text="@string/rating"
                         android:id="@+id/test2"
                         android:textColor="@android:color/black"/>
                     <TextView
                         android:id="@+id/tv_movie_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="7.4/10"
+                        tools:text="@string/ratingEx"
                         android:padding="8dp" />
                 </LinearLayout>
                 <LinearLayout
@@ -119,7 +119,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Release Date: "
+                        android:text="@string/realeaseDate"
                         android:id="@+id/test3"
                         android:textColor="@android:color/black"/>
                     <TextView
@@ -127,12 +127,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
-                        tools:text="2015" />
+                        tools:text="@string/yearExample" />
                 </LinearLayout>
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Save as Favorite"
+                    android:text="@string/SaveAsFavorite"
                     android:padding="8dp"
                     android:layout_margin="8dp"
                    android:clickable="true"
@@ -144,7 +144,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Overview: "
+                        android:text="@string/overview"
                         android:id="@+id/test4"
                         android:textColor="@android:color/black"/>
                     <TextView
@@ -152,7 +152,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
-                        tools:text="Katniss Everdeen and Peeta Mellark become targets of the Capitol after their victory in the 74th Hunger Games sparks a rebellion in the Districts of Panem. " />
+                        tools:text="@string/overviewEx"/>
+
                 </LinearLayout>
 
                 <TextView
@@ -160,11 +161,11 @@
                     android:layout_height="wrap_content"
                     android:background="#c99586b1"
                     android:id="@+id/trailerTitle"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
-                    android:text="Trailers"/>
+                    android:text="@string/trailers"/>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -182,10 +183,11 @@
                     android:background="#c9895ce2"
                     android:textStyle="bold"
                     android:id="@+id/reviewTitle"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark"
-                    android:text="Reviews"/>
+                    android:text="@string/review"
+                    />
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

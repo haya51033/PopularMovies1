@@ -19,7 +19,7 @@ public class TrailerResponceValue  extends RealmObject implements Parcelable
     private Integer id;
     @SerializedName("results")
     @Expose
-    private RealmList<Videos> videos = null;
+    private RealmList<Videos> videos = new RealmList<>();
     public final static Parcelable.Creator<TrailerResponceValue> CREATOR = new Creator<TrailerResponceValue>() {
 
 

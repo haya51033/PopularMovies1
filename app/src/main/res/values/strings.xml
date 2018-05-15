@@ -2,4 +2,21 @@
     <string name="app_name">Popular Movies</string>
     <string name="sort_popular">Sort by Most Popular</string>
     <string name="sort_rating">Sort by Top Rated</string>
+    <string name="sort_favorite">Sort by Favorite</string>
+    <string name="titleMovie">Title: </string>
+    <string name="movieTitelContent">The Hunger Games</string>
+    <string name="LanguageMovie">Language: </string>
+    <string name="english">English</string>
+    <string name="rating">Rating: </string>
+    <string name="ratingEx">7.4/10</string>
+    <string name="realeaseDate">Release Date: </string>
+    <string name="yearExample">2015</string>
+    <string name="SaveAsFavorite">Save as Favorite</string>
+    <string name="overview">Overview: </string>
+    <string name="overviewEx">Katniss Everdeen and Peeta Mellark become targets of the Capitol after their victory in the 74th Hunger Games sparks a rebellion in the Districts of Panem. " /></string>
+
+    <string name="trailers">Trailers</string>
+    <string name="review">Reviews</string>
+    <string name="author">Author</string>
+    <string name="content">Content</string>
 </resources>

@@ -23,7 +23,7 @@ public class ReviewsResponceValue  extends RealmObject implements Parcelable
     private Integer page;
     @SerializedName("results")
     @Expose
-    private RealmList<Reviews> results = null;
+    private RealmList<Reviews> results = new RealmList<>();
     @SerializedName("total_pages")
     @Expose
     private Integer totalPages;
