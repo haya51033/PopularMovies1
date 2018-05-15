@@ -129,14 +129,28 @@
                         android:padding="8dp"
                         tools:text="@string/yearExample" />
                 </LinearLayout>
-                <Button
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/SaveAsFavorite"
-                    android:padding="8dp"
-                    android:layout_margin="8dp"
-                   android:clickable="true"
-                    android:id="@+id/saveAsFv_button"/>
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/SaveAsFavorite"
+                        android:padding="8dp"
+                        android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:id="@+id/saveAsFv_button"/>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/share"
+                        android:padding="8dp"
+                        android:layout_margin="8dp"
+                        android:clickable="true"
+                        android:id="@+id/share_button"/>
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

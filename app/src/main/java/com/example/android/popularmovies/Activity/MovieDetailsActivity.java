@@ -174,6 +174,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             realm33.commitTransaction();
             saveAsFavoButton = (Button) findViewById(R.id.saveAsFv_button);
 
+
             if(movie3 != null)
             {
                 saveAsFavoButton.setVisibility(View.GONE);
@@ -232,8 +233,28 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
                     }
                 });
 
+
+
             }
+
         }
+        Button shareButton = (Button) findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, "Popular Movie");
+                    String sAux = "\nLet me recommend you this Movie: \n\n "+ movie.getTitle()+"\n\n";
+                    sAux = sAux + "http://www.youtube.com/watch?v=" + Object1.get(0).getKey() +"\n\n";
+                    i.putExtra(Intent.EXTRA_TEXT, sAux);
+                    startActivity(Intent.createChooser(i, "choose one"));
+                } catch(Exception e) {
+                    //
+                }
+            }
+        });
     }
 
 
