@@ -6,12 +6,10 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
 
-public class TrailerResponceValue  extends RealmObject implements Parcelable
+public class TrailerResponceValue  implements Parcelable
 {
 
     @SerializedName("id")
@@ -19,7 +17,7 @@ public class TrailerResponceValue  extends RealmObject implements Parcelable
     private Integer id;
     @SerializedName("results")
     @Expose
-    private RealmList<Videos> videos = new RealmList<>();
+    private ArrayList<Videos> videos = new ArrayList<>();
     public final static Parcelable.Creator<TrailerResponceValue> CREATOR = new Creator<TrailerResponceValue>() {
 
 
@@ -53,11 +51,11 @@ public class TrailerResponceValue  extends RealmObject implements Parcelable
         this.id = id;
     }
 
-    public RealmList<Videos> getVideos() {
+    public ArrayList<Videos> getVideos() {
         return videos;
     }
 
-    public void setResults(RealmList<Videos> results) {
+    public void setResults(ArrayList<Videos> results) {
         this.videos = results;
     }
 

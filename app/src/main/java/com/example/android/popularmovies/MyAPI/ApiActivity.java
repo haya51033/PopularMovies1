@@ -16,7 +16,7 @@ public class ApiActivity extends AppCompatActivity{
 
     public static final String BASE_URL= "https://api.themoviedb.org/";
     //TODO: Please assign a api key value:
-    private final String api_key= "";
+    private final String api_key= "a251c89afdfec4cfb13d71567d48f13a";
 
     Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")

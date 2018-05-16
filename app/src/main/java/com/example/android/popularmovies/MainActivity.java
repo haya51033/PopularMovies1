@@ -34,8 +34,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -251,7 +250,7 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
        else // if no connection
            {
 
-               mID=movie.getId();
+             /*  mID=movie.getId();
 
                Realm.init(getApplicationContext());
                Realm realm77 = Realm.getDefaultInstance();
@@ -292,7 +291,7 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
                args.putSerializable("ReviewsList", reviewsArrayList);
                args.putSerializable("TrailerResult",trailerResultList);
                intent.putExtra("BUNDLE", args);
-               startActivity(intent);
+               startActivity(intent);*/
 
            }
     }
@@ -336,7 +335,7 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
 
     public void sortByFavorite()
     {
-        Realm.init(getApplicationContext());
+       /* Realm.init(getApplicationContext());
         final Realm realm3 = Realm.getDefaultInstance();
         realm3.beginTransaction();
         RealmResults<Movie> movies = realm3.where(Movie.class).findAll();
@@ -345,7 +344,7 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
         ArrayList<Movie> favoMovie = new ArrayList<>();
         favoMovie.addAll(movies);
 
-        configureRecyclerView(favoMovie);
+        configureRecyclerView(favoMovie);*/
 
         SortState="Favorite";
     }

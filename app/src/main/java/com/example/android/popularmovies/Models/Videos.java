@@ -6,9 +6,8 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
 
-public class Videos  extends RealmObject implements Parcelable
+public class Videos  implements Parcelable
 {
 
     @SerializedName("id")

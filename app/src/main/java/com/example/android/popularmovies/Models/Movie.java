@@ -12,9 +12,6 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-
 
 /** Note:
  * I use this site: http://www.parcelabler.com/
@@ -23,7 +20,7 @@ import io.realm.RealmObject;
  * I pass movie Item from Main Activity to the details Activity when press on the movie
  */
 
-public class Movie extends RealmObject implements Parcelable {
+public class Movie implements Parcelable {
 
     @SerializedName("vote_count")
     @Expose
@@ -54,7 +51,7 @@ public class Movie extends RealmObject implements Parcelable {
     private String originalTitle;
     @SerializedName("genre_ids")
     @Expose
-    private RealmList<Integer> genreIds = null;
+    private List<Integer> genreIds = null;
     @SerializedName("backdrop_path")
     @Expose
     private String backdropPath;
@@ -141,11 +138,11 @@ public class Movie extends RealmObject implements Parcelable {
         this.originalTitle = originalTitle;
     }
 
-    public RealmList<Integer> getGenreIds() {
+    public List<Integer> getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(RealmList<Integer> genreIds) {
+    public void setGenreIds(List<Integer> genreIds) {
         this.genreIds = genreIds;
     }
 
@@ -194,7 +191,7 @@ public class Movie extends RealmObject implements Parcelable {
         originalLanguage = in.readString();
         originalTitle = in.readString();
         if (in.readByte() == 0x01) {
-            genreIds = new RealmList<Integer>();
+            genreIds = new ArrayList<Integer>();
             in.readList(genreIds, Integer.class.getClassLoader());
         } else {
             genreIds = null;

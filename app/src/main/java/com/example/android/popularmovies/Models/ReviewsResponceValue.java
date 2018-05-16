@@ -6,13 +6,10 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-import io.realm.RealmList;
-import io.realm.RealmObject;
+import java.util.ArrayList;
 
 
-public class ReviewsResponceValue  extends RealmObject implements Parcelable
+public class ReviewsResponceValue implements Parcelable
 {
 
     @SerializedName("id")
@@ -23,7 +20,7 @@ public class ReviewsResponceValue  extends RealmObject implements Parcelable
     private Integer page;
     @SerializedName("results")
     @Expose
-    private RealmList<Reviews> results = new RealmList<>();
+    private ArrayList<Reviews> results = new ArrayList<>();
     @SerializedName("total_pages")
     @Expose
     private Integer totalPages;
@@ -74,11 +71,11 @@ public class ReviewsResponceValue  extends RealmObject implements Parcelable
         this.page = page;
     }
 
-    public RealmList<Reviews> getResults() {
+    public ArrayList<Reviews> getResults() {
         return results;
     }
 
-    public void setResults( RealmList<Reviews> results) {
+    public void setResults( ArrayList<Reviews> results) {
         this.results = results;
     }
 

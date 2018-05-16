@@ -7,12 +7,10 @@ package com.example.android.popularmovies.Models;
         import com.google.gson.annotations.Expose;
         import com.google.gson.annotations.SerializedName;
 
-        import java.util.List;
+        import java.util.ArrayList;
 
-        import io.realm.RealmList;
-        import io.realm.RealmObject;
 
-public class ResponseValue  extends RealmObject {
+public class ResponseValue  {
 
     @SerializedName("page")
     @Expose
@@ -26,16 +24,16 @@ public class ResponseValue  extends RealmObject {
 
     @SerializedName("results")
     @Expose
-    private RealmList<Movie> movies = null;
+    private ArrayList<Movie> movies = null;
 
     public Integer getPage() {
         return page;
     }
-    public RealmList<Movie> getMovies() {
+    public ArrayList<Movie> getMovies() {
         return movies;
     }
 
-    public void setMovies(RealmList<Movie> movies) {
+    public void setMovies(ArrayList<Movie> movies) {
         this.movies = movies;
     }
 

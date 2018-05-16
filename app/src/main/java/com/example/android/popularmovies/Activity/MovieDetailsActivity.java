@@ -25,7 +25,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import io.realm.Realm;
 
 
 /**
@@ -167,6 +166,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
 
 
+
+            /*
             Realm.init(getApplicationContext());
             final Realm realm33 = Realm.getDefaultInstance();
             realm33.beginTransaction();
@@ -235,7 +236,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
 
 
-            }
+            }*/
 
         }
         Button shareButton = (Button) findViewById(R.id.share_button);
