@@ -32,13 +32,35 @@ public class MoviesDB extends SQLiteOpenHelper {
                 MovieContract.FavoriteMoviesEntry.COLUMN_REVIEWS + " TEXT," +
                 MovieContract.FavoriteMoviesEntry.COLUMN_BACKDROP_IMG+ " TEXT NOT NULL"+
                 " );";
+
+        final String SQL_CREATE_VIDEOS_MOVIES_TABLE = "CREATE TABLE " + MovieContract.VideosMovieEntry.TABLE_NAME + " (" +
+                MovieContract.VideosMovieEntry._ID + " INTEGER PRIMARY KEY," +
+                MovieContract.VideosMovieEntry.COLUMN_VID+ " TEXT NOT NULL, " +
+                MovieContract.VideosMovieEntry.COLUMN_MOVIE +" INTEGER NOT NULL, " +
+                MovieContract.VideosMovieEntry.COLUMN_KEY + " TEXT NOT NULL, " +
+                MovieContract.VideosMovieEntry.COLUMN_NAME + " TEXT NOT NULL " +
+                " );";
+
+        final String SQL_CREATE_REVIEWS_MOVIES_TABLE = "CREATE TABLE " + MovieContract.ReviewsMovieEntry.TABLE_NAME + " (" +
+                MovieContract.ReviewsMovieEntry._ID + " INTEGER PRIMARY KEY," +
+                MovieContract.ReviewsMovieEntry.COLUMN_RID + " TEXT NOT NULL, " +
+                MovieContract.ReviewsMovieEntry.COLUMN_MOVIE +" INTEGER NOT NULL, " +
+                MovieContract.ReviewsMovieEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
+                MovieContract.ReviewsMovieEntry.COLUMN_CONTENT + " TEXT NOT NULL " +
+                " );";
+
         db.execSQL(SQL_CREATE_FAVOTIRE_MOVIES_TABLE);
+        db.execSQL(SQL_CREATE_VIDEOS_MOVIES_TABLE);
+        db.execSQL(SQL_CREATE_REVIEWS_MOVIES_TABLE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS " + MovieContract.FavoriteMoviesEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.VideosMovieEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.ReviewsMovieEntry.TABLE_NAME);
+
         onCreate(db);
     }
 }

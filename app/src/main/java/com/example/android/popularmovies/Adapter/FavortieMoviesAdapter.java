@@ -35,18 +35,12 @@ private MovieOnClickHandler mMovieOnClickHandler;
         mCursor = movieData;
         notifyDataSetChanged();
     }
-/**
- * Constructor using the context and the db cursor
- * @param context the calling context/activity
- * @param cursor the db cursor with waitlist data to display
- */
+
 public FavortieMoviesAdapter(Context context, Cursor cursor) {
         this.mContext = context;
         this.mCursor = cursor;
 
         }
-
-
 
 @Override
 public FavortieMoviesAdapter.MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -86,14 +80,9 @@ public int getItemCount() {
  * @param newCursor the new cursor that will replace the existing one
  */
 public void swapCursor(Cursor newCursor) {
-        // COMPLETED (16) Inside, check if the current cursor is not null, and close it if so
-        // Always close the previous mCursor first
         if (mCursor != null) mCursor.close();
-        // COMPLETED (17) Update the local mCursor to be equal to  newCursor
         mCursor = newCursor;
-        // COMPLETED (18) Check if the newCursor is not null, and call this.notifyDataSetChanged() if so
         if (newCursor != null) {
-        // Force the RecyclerView to refresh
         this.notifyDataSetChanged();
         }
         }
@@ -107,10 +96,8 @@ public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     public MovieViewHolder(View itemView) {
         super(itemView);
-
         mImageView =(ImageView)itemView.findViewById(R.id.iv_movie_poster);
         itemView.setOnClickListener(this);
-
     }
 
     @Override
@@ -130,9 +117,6 @@ public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnC
         Movie selectedOne = new Movie (id, avreg,poster,orginalLang,title,backPoster,overview,releasDate);
         ArrayList<Movie> movieArrayList = new ArrayList<>();
         movieArrayList.add(selectedOne);
-
-
-//        mMovieOnClickHandler.onClickMovie(selectedOne);
 
         Intent intent = new Intent(mContext, MovieDetailsActivity.class);
         Bundle args = new Bundle();

@@ -363,11 +363,7 @@ public class MainActivity extends AppCompatActivity  implements FavortieMoviesAd
         ((GridLayoutManager)rvMovies.getLayoutManager()).scrollToPosition(positionIndex);
     }
 
- /*   @Override
-    public void onClickMovie(Cursor cursor) {
-        Toast.makeText(getApplicationContext(),"on click cursor.", Toast.LENGTH_LONG).show();
 
-    }*/
    public  void sortByTopRating()
    {
        Call<ResponseValue> call = service.GetRated(rB.getApi_key().toString());

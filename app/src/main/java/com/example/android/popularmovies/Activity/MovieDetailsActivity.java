@@ -29,6 +29,7 @@ import com.example.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
@@ -39,43 +40,23 @@ import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 public class MovieDetailsActivity extends AppCompatActivity implements TrailerAdapter.TrailerOnClickHandler,
         ReviewAdapter.ReviewOnClickHandler{
-    private TextView mTitleTextView;
-    private ImageView mPosterImageViewBack;
-    private ImageView mPosterImageView;
-    private TextView mYearTextView;
-    private TextView mRating;
-    private TextView mOverview;
-    private TextView mLang;
-    private TextView mtest;
-    private TextView mtest1;
-    private TextView mtest2;
-    private TextView mtest3;
-    private TextView mtest4;
-    private TextView anyb;
-    private TextView anyc;
-    private TextView trailerTit;
-    private TextView reviewTit;
-    public Movie movie;
-    public Button saveAsFavoButton;
-    TextView tv_MovieTrailer;
-    TextView tv_outher;
-    TextView tv_content;
-    Videos video;
-    Reviews reviews;
-    ReviewsResponceValue reviewsResponceValue;
-    TrailerResponceValue trailer;
-    TrailerAdapter trailerAdapter;
-    ReviewAdapter reviewAdapter;
-    ArrayList<Movie> Object;
-    ArrayList<Videos> Object1;
-    ArrayList<Reviews> Object2;
-    ArrayList<TrailerResponceValue> Object3;
-    ArrayList<ReviewsResponceValue> Object4;
-    int movieID;
-    RecyclerView trailerRV;
-    RecyclerView reviewRV;
-    private SQLiteDatabase mDb;
+    private TextView mTitleTextView,mYearTextView, mRating, mOverview, mLang, mtest,
+            mtest1, mtest2, mtest3, mtest4, anyb, anyc, trailerTit, reviewTit;
+    TextView tv_MovieTrailer, tv_outher, tv_content;
 
+    private ImageView mPosterImageViewBack,mPosterImageView;
+    public Movie movie; public Button saveAsFavoButton;
+     Videos video; Reviews reviews;
+    ReviewsResponceValue reviewsResponceValue; TrailerResponceValue trailer;
+    TrailerAdapter trailerAdapter; ReviewAdapter reviewAdapter;
+    ArrayList<Movie> Object; ArrayList<Videos> Object1;
+    ArrayList<Reviews> Object2; ArrayList<TrailerResponceValue> Object3;
+    ArrayList<ReviewsResponceValue> Object4; int movieID;
+    RecyclerView trailerRV; RecyclerView reviewRV;
+    private SQLiteDatabase mDb, mDb1, mDb2;
+
+    public ArrayList<Videos> trailerVideos= new ArrayList<>();
+    public ArrayList<Reviews> movieReviews = new ArrayList<>();
 
 
     @Override
@@ -89,9 +70,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         reviewRV.setLayoutManager(new LinearLayoutManager(this));
 
         MoviesDB dbHelper = new MoviesDB(this);
-
-        // Keep a reference to the mDb until paused or killed. Get a writable database
-        // because you will be adding restaurant customers
         mDb = dbHelper.getWritableDatabase();
 
         Object = new ArrayList<>();
@@ -105,7 +83,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         trailer = new TrailerResponceValue();
         reviews = new Reviews();
         Intent intent = getIntent();
-        Bundle args = intent.getBundleExtra("BUNDLE");
+        final Bundle args = intent.getBundleExtra("BUNDLE");
 
         Bundle args1 = intent.getBundleExtra("BUNDLE1");
        if(args1!= null)
@@ -184,10 +162,25 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             Picasso.with(getApplicationContext()).load(url+img1).into(mPosterImageViewBack);
             Picasso.with(getApplicationContext()).load(url+img2).into(mPosterImageView);
 
-            ArrayList<Videos> tes = new ArrayList<>();
-            tes.addAll(Object1);
-            configureRecyclerView(tes);
-            configureRecyclerView2(Object2);
+            if(args !=null)
+            {
+                ArrayList<Videos> tes = new ArrayList<>();
+                tes.addAll(Object1);
+                configureRecyclerView(tes);
+                configureRecyclerView2(Object2);
+            }
+           if(args == null)
+           {
+               ArrayList<Videos> videosArrayList1 =new ArrayList<>();
+               getAllTrailer(movieID).toArray();
+               videosArrayList1.addAll(trailerVideos);
+               configureRecyclerView(videosArrayList1);
+
+               ArrayList<Reviews> reviewsArrayList1 = new ArrayList<>();
+               getAllReview(movieID).toArray();
+               reviewsArrayList1.addAll(movieReviews);
+               configureRecyclerView2(reviewsArrayList1);
+           }
 
 
             saveAsFavoButton = (Button)findViewById(R.id.saveAsFv_button);
@@ -203,8 +196,23 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
                         @Override
                         public void onClick(View view) {
                             Movie mm = movie;
+                            ArrayList <Videos> vv = new ArrayList<>();
+                            ArrayList <Reviews> rr = new ArrayList<>();
+
                             try {
                                 addNewMovie(mm);
+                                if(args != null){
+                                    if(Object1.size()>0)
+                                    {
+                                        vv.addAll(Object1);
+                                        addTrailers(mm.getId(),vv);
+                                    }
+                                    if(Object2.size()>0)
+                                    {
+                                        rr.addAll(Object2);
+                                        addReviews(mm.getId(),rr);
+                                    }
+                                }
                                 Toast.makeText(getApplicationContext(),"Movie saved successfully..", Toast.LENGTH_LONG).show();
                             }
                             catch (Exception e)
@@ -242,12 +250,40 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_OVERVIEW,movie.getOverview());
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_POSTER,movie.getPosterPath());
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE,movie.getReleaseDate());
-        //cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_REVIEWS,"review");
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_TITLE,movie.getTitle());
-       // cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_TRAILER,"trailer");
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-
         return mDb.insert(MovieContract.FavoriteMoviesEntry.TABLE_NAME, null, cv);
+    }
+
+
+    private long addTrailers(int movie_id, ArrayList<Videos> videosList)
+    {
+        int i=0;
+        for(Videos v : videosList) {
+            ContentValues cv = new ContentValues();
+            cv.put(MovieContract.VideosMovieEntry.COLUMN_VID, v.getId());
+            cv.put(MovieContract.VideosMovieEntry.COLUMN_MOVIE, movie_id);
+            cv.put(MovieContract.VideosMovieEntry.COLUMN_NAME,v.getName());
+            cv.put(MovieContract.VideosMovieEntry.COLUMN_KEY,v.getKey());
+            mDb.insert(MovieContract.VideosMovieEntry.TABLE_NAME,null,cv);
+            i++;
+        }
+        return 1;
+    }
+
+
+    private long addReviews(int movie_id, ArrayList<Reviews> reviewsArrayList){
+        int i=0;
+        for(Reviews r : reviewsArrayList){
+            ContentValues cv = new ContentValues();
+            cv.put(MovieContract.ReviewsMovieEntry.COLUMN_RID, r.getId());
+            cv.put(MovieContract.ReviewsMovieEntry.COLUMN_MOVIE,movie_id);
+            cv.put(MovieContract.ReviewsMovieEntry.COLUMN_AUTHOR,r.getAuthor());
+            cv.put(MovieContract.ReviewsMovieEntry.COLUMN_CONTENT, r.getContent());
+            mDb.insert(MovieContract.ReviewsMovieEntry.TABLE_NAME,null,cv);
+            i++;
+        }
+        return 1;
     }
 
     private boolean getMovie(int id){
@@ -260,6 +296,49 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             return true;
         }
         else return false;
+    }
+
+    public List<Videos> getAllTrailer(int movie_id){
+
+        String getVideos= "SELECT * FROM "+MovieContract.VideosMovieEntry.TABLE_NAME +
+                " WHERE "+ MovieContract.VideosMovieEntry.COLUMN_MOVIE+"="+ movie_id;
+        MoviesDB dbHelper = new MoviesDB(this);
+        mDb1 = dbHelper.getReadableDatabase();
+        Cursor cursor = mDb1.rawQuery(getVideos,null);
+
+        if(cursor.moveToFirst()){
+            do
+                {
+                    Videos videosObj = new Videos();
+                   videosObj.setId(String.valueOf(cursor.getInt(1)));
+                   videosObj.setKey(cursor.getString(3));
+                   videosObj.setName(cursor.getString(4));
+
+                   trailerVideos.add(videosObj);
+                } while (cursor.moveToNext());
+        }
+        mDb1.close();
+        return trailerVideos;
+    }
+
+    public List<Reviews> getAllReview(int movie_id){
+        String getReviews= "SELECT * FROM "+MovieContract.ReviewsMovieEntry.TABLE_NAME +
+                " WHERE "+ MovieContract.ReviewsMovieEntry.COLUMN_MOVIE+"="+ movie_id;
+        MoviesDB dbHelper = new MoviesDB(this);
+        mDb2 = dbHelper.getReadableDatabase();
+        Cursor cursor = mDb2.rawQuery(getReviews,null);
+        if(cursor.moveToFirst()){
+            do{
+                Reviews reviewsObject = new Reviews();
+                reviewsObject.setId(cursor.getString(1));
+                reviewsObject.setAuthor(cursor.getString(3));
+                reviewsObject.setContent(cursor.getString(4));
+
+                movieReviews.add(reviewsObject);
+            }while (cursor.moveToNext());
+        }
+        mDb2.close();
+        return movieReviews;
     }
 
     private void configureRecyclerView(ArrayList videos) {
