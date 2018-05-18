@@ -1,7 +1,10 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,10 +16,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.example.android.popularmovies.Activity.MovieDetailsActivity;
+import com.example.android.popularmovies.Adapter.FavortieMoviesAdapter;
 import com.example.android.popularmovies.Adapter.MoviesAdapter;
+import com.example.android.popularmovies.Data.MovieContract;
+import com.example.android.popularmovies.Data.MoviesDB;
 import com.example.android.popularmovies.Models.Movie;
 import com.example.android.popularmovies.Models.ResponseValue;
 import com.example.android.popularmovies.Models.Reviews;
@@ -39,7 +47,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity  implements MoviesAdapter.MovieOnClickHandler{
+public class MainActivity extends AppCompatActivity  implements FavortieMoviesAdapter.MovieOnClickHandler, MoviesAdapter.MovieOnClickHandler
+        {
     ApiActivity rB = new ApiActivity();
     IApi service =rB.retrofit.create(IApi.class);
     MoviesAdapter moviesAdapter;
@@ -62,6 +71,9 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
     ReviewsResponceValue h = new ReviewsResponceValue();
     List<Reviews> rrr = new ArrayList<>();
     int mID;
+
+    private SQLiteDatabase mDb;
+    FavortieMoviesAdapter favortieMoviesAdapter;
 
 
 
@@ -100,6 +112,16 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
         mGridLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
 
         new Connection().execute("");
+        // Create a DB helper (this will create the DB if run for the first time)
+        MoviesDB dbHelper = new MoviesDB(this);
+
+        // Keep a reference to the mDb until paused or killed. Get a writable database
+        // because you will be adding restaurant customers
+        mDb = dbHelper.getWritableDatabase();
+
+        // Get all guest info from the database and save in a cursor
+     //   Cursor cursor = getAllGuests();
+       // int x;
 
         if(savedInstanceState != null)
         {
@@ -116,6 +138,8 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
             {
                 sortByFavorite();
             }
+
+
         }
         else
             {
@@ -158,6 +182,8 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
        ((GridLayoutManager)rvMovies.getLayoutManager()).scrollToPosition(positionIndex);
    }
 
+
+
     @Override
     public void onClickMovie(Movie movie) {
 
@@ -166,6 +192,8 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
         movieArrayList.add(movie);
         new Connection().execute("");// test connection
         mID=movie.getId();
+
+        Cursor cursor1 = getAllGuests();
 
        if(connection == true) // if there is internet connection
        {
@@ -249,51 +277,33 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
        }
        else // if no connection
            {
+               Toast.makeText(getApplicationContext(),"Hello", Toast.LENGTH_LONG).show();
 
-             /*  mID=movie.getId();
 
-               Realm.init(getApplicationContext());
-               Realm realm77 = Realm.getDefaultInstance();
-               realm77.beginTransaction();
-               ReviewsResponceValue rv =
-                       realm77.where(ReviewsResponceValue.class).equalTo("id",movie.getId()).findFirst();
-
-               realm77.commitTransaction();
-               if(rv != null)
-               {
-                   reviewResult.add(rv);
-               }
-
-               Realm realm88 = Realm.getDefaultInstance();
-               realm88.beginTransaction();
-
-               TrailerResponceValue tr =
-                       realm88.where(TrailerResponceValue.class).equalTo("id",mID).findFirst();
-               realm88.commitTransaction();
-               if (tr != null) {
-                   trailerResultList.add(tr);
-               }
-
-               arrayList1=new ArrayList<>();
-               if(trailerResultList.size() != 0) {
-                   arrayList1.addAll(trailerResultList.get(0).getVideos());
-               }
-               reviewsArrayList=new ArrayList<>();
-               if(reviewResult.size() != 0) {
-                   reviewsArrayList.addAll(reviewResult.get(0).getResults());
-               }
-
-               Intent intent = new Intent(getApplicationContext(), MovieDetailsActivity.class);
-               Bundle args = new Bundle();
-               args.putSerializable("MovieList", movieArrayList);
-               args.putSerializable("ReviewResultList", reviewResult);
-               args.putSerializable("VideosList", arrayList1);
-               args.putSerializable("ReviewsList", reviewsArrayList);
-               args.putSerializable("TrailerResult",trailerResultList);
-               intent.putExtra("BUNDLE", args);
-               startActivity(intent);*/
-
+               getMovie();
+               int jj=1;
            }
+    }
+
+    private Cursor getAllGuests() {
+            return mDb.query(
+                    MovieContract.FavoriteMoviesEntry.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    MovieContract.FavoriteMoviesEntry.COLUMN_TITLE
+            );
+    }
+
+    private Cursor getMovie(){
+        String unreadquery="SELECT * FROM "+MovieContract.FavoriteMoviesEntry.TABLE_NAME +
+                " WHERE "+ MovieContract.FavoriteMoviesEntry.COLUMN_ID +"="+ mID;
+
+        Cursor cursor=mDb.rawQuery(unreadquery, null);
+        return cursor;
+
     }
 
     public void sortByMostPopular()
@@ -335,20 +345,29 @@ public class MainActivity extends AppCompatActivity  implements MoviesAdapter.Mo
 
     public void sortByFavorite()
     {
-       /* Realm.init(getApplicationContext());
-        final Realm realm3 = Realm.getDefaultInstance();
-        realm3.beginTransaction();
-        RealmResults<Movie> movies = realm3.where(Movie.class).findAll();
-        realm3.commitTransaction();
-
-        ArrayList<Movie> favoMovie = new ArrayList<>();
-        favoMovie.addAll(movies);
-
-        configureRecyclerView(favoMovie);*/
-
+        Cursor cursor = getAllGuests();
+        configureRecyclerView1(cursor);
         SortState="Favorite";
     }
 
+
+
+    private void configureRecyclerView1(Cursor cursor) {
+        rvMovies = (RecyclerView) findViewById(R.id.rv_movies);
+        rvMovies.setHasFixedSize(true);
+        rvMovies.setLayoutManager( new GridLayoutManager(getApplicationContext(), 3));
+        favortieMoviesAdapter = new FavortieMoviesAdapter(this, cursor);
+        favortieMoviesAdapter.setMovieData(cursor);
+        rvMovies.setAdapter(favortieMoviesAdapter);
+        favortieMoviesAdapter.swapCursor(getAllGuests());
+        ((GridLayoutManager)rvMovies.getLayoutManager()).scrollToPosition(positionIndex);
+    }
+
+ /*   @Override
+    public void onClickMovie(Cursor cursor) {
+        Toast.makeText(getApplicationContext(),"on click cursor.", Toast.LENGTH_LONG).show();
+
+    }*/
    public  void sortByTopRating()
    {
        Call<ResponseValue> call = service.GetRated(rB.getApi_key().toString());

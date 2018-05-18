@@ -1,6 +1,9 @@
 package com.example.android.popularmovies.Activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +18,8 @@ import android.widget.Toast;
 
 import com.example.android.popularmovies.Adapter.ReviewAdapter;
 import com.example.android.popularmovies.Adapter.TrailerAdapter;
+import com.example.android.popularmovies.Data.MovieContract;
+import com.example.android.popularmovies.Data.MoviesDB;
 import com.example.android.popularmovies.Models.Movie;
 import com.example.android.popularmovies.Models.Reviews;
 import com.example.android.popularmovies.Models.ReviewsResponceValue;
@@ -25,6 +30,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
 /**
@@ -68,6 +74,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
     int movieID;
     RecyclerView trailerRV;
     RecyclerView reviewRV;
+    private SQLiteDatabase mDb;
+
 
 
     @Override
@@ -79,6 +87,12 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
         trailerRV.setLayoutManager(new LinearLayoutManager(this));
         reviewRV.setLayoutManager(new LinearLayoutManager(this));
+
+        MoviesDB dbHelper = new MoviesDB(this);
+
+        // Keep a reference to the mDb until paused or killed. Get a writable database
+        // because you will be adding restaurant customers
+        mDb = dbHelper.getWritableDatabase();
 
         Object = new ArrayList<>();
         Object1 = new ArrayList<>();
@@ -93,37 +107,48 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         Intent intent = getIntent();
         Bundle args = intent.getBundleExtra("BUNDLE");
 
+        Bundle args1 = intent.getBundleExtra("BUNDLE1");
+       if(args1!= null)
+       {
+           Object = (ArrayList<Movie>) args1.getSerializable("MovieList");
+           if (Object.size() != 0)
+           {
+               movie = Object.get(0);
+           }
+       }
 
-
-        Object1 = (ArrayList<Videos>) args.getSerializable("VideosList");
-        if (Object1.size() != 0)
+        if (args != null)
         {
-            video = Object1.get(0);
-            trailerTit = (TextView)findViewById(R.id.trailerTitle);
-        }
-         Object2 = (ArrayList<Reviews>) args.getSerializable("ReviewsList");
-        if (Object2.size() !=0)
-        {
-            reviews = Object2.get(0);
-            reviewTit = (TextView)findViewById(R.id.reviewTitle);
-        }
+            Object1 = (ArrayList<Videos>) args.getSerializable("VideosList");
+            if (Object1.size() != 0)
+            {
+                video = Object1.get(0);
+                trailerTit = (TextView)findViewById(R.id.trailerTitle);
+            }
+            Object2 = (ArrayList<Reviews>) args.getSerializable("ReviewsList");
+            if (Object2.size() !=0)
+            {
+                reviews = Object2.get(0);
+                reviewTit = (TextView)findViewById(R.id.reviewTitle);
+            }
 
-        Object3 = (ArrayList<TrailerResponceValue>) args.getSerializable("TrailerResult");
-         if(Object3.size() !=0)
-         {
-             trailer = Object3.get(0);
-         }
+            Object3 = (ArrayList<TrailerResponceValue>) args.getSerializable("TrailerResult");
+            if(Object3.size() !=0)
+            {
+                trailer = Object3.get(0);
+            }
 
-        Object = (ArrayList<Movie>) args.getSerializable("MovieList");
-        if (Object.size() != 0)
-        {
-            movie = Object.get(0);
-        }
+            Object = (ArrayList<Movie>) args.getSerializable("MovieList");
+            if (Object.size() != 0)
+            {
+                movie = Object.get(0);
+            }
 
-        Object4 = (ArrayList<ReviewsResponceValue>) args.getSerializable("ReviewResultList");
-        if(Object4.size() != 0)
-        {
-            reviewsResponceValue = Object4.get(0);
+            Object4 = (ArrayList<ReviewsResponceValue>) args.getSerializable("ReviewResultList");
+            if(Object4.size() != 0)
+            {
+                reviewsResponceValue = Object4.get(0);
+            }
         }
 
         movieID = movie.getId();
@@ -165,79 +190,31 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             configureRecyclerView2(Object2);
 
 
-
-
-            /*
-            Realm.init(getApplicationContext());
-            final Realm realm33 = Realm.getDefaultInstance();
-            realm33.beginTransaction();
-            Movie movie3 = realm33.where(Movie.class).equalTo("id",movieID).findFirst();
-            realm33.commitTransaction();
-            saveAsFavoButton = (Button) findViewById(R.id.saveAsFv_button);
-
-
-            if(movie3 != null)
+            saveAsFavoButton = (Button)findViewById(R.id.saveAsFv_button);
+            boolean exist = getMovie(movie.getId());
+            if(exist == true)
             {
                 saveAsFavoButton.setVisibility(View.GONE);
             }
-            else {
-                saveAsFavoButton.setOnClickListener( new View.OnClickListener() {
 
-
-                    @Override
-                    public void onClick(View v) {
-
-                       try
-                       {
-                           // save movie info
-                           Realm.init(getApplicationContext());
-                           Realm realm;
-                           realm = Realm.getDefaultInstance();
-                           realm.beginTransaction();
-                           Movie movie1 = movie;
-                           if (movie1 != null) {
-                               realm.copyToRealm(movie1);
-                           }
-                           realm.commitTransaction();
-
-
-                           Realm realm11;
-                           realm11 = Realm.getDefaultInstance();
-                           realm11.beginTransaction();
-                           TrailerResponceValue trailerResponceValue1 = trailer;
-                           if(trailerResponceValue1 != null)
-                           {
-                               realm11.copyToRealm(trailerResponceValue1);
-                           }
-                           realm11.commitTransaction();
-
-
-                           Realm realm9;
-                           realm9 = Realm.getDefaultInstance();
-                           realm9.beginTransaction();
-                           ReviewsResponceValue reviewsResponceValue1 = reviewsResponceValue;
-                           if (reviewsResponceValue1 != null) {
-                               realm9.copyToRealm(reviewsResponceValue1);
-
-                           }
-                           realm9.commitTransaction();
-
-                       }
-                       catch (Exception e)
-                       {
-                           Toast.makeText(getApplicationContext(),"Error saving..", Toast.LENGTH_LONG).show();
-
-                       }
-                       finally {
-                           Toast.makeText(getApplicationContext(),"Movie saved successfully..", Toast.LENGTH_LONG).show();
-                       }
-                    }
-                });
-
-
-
-            }*/
-
+            else
+                {
+                    saveAsFavoButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Movie mm = movie;
+                            try {
+                                addNewMovie(mm);
+                                Toast.makeText(getApplicationContext(),"Movie saved successfully..", Toast.LENGTH_LONG).show();
+                            }
+                            catch (Exception e)
+                            {
+                                String msg = e.getMessage();
+                                Toast.makeText(getApplicationContext(),"Error saving.. " + msg, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
         }
         Button shareButton = (Button) findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -257,7 +234,33 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             }
         });
     }
+    private long addNewMovie(Movie movie) {
+        ContentValues cv = new ContentValues();
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_ID,movie.getId());
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_BACKDROP_IMG,movie.getBackdropPath());
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_ORGINAL_LANGUAGE,movie.getOriginalLanguage());
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_OVERVIEW,movie.getOverview());
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_POSTER,movie.getPosterPath());
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE,movie.getReleaseDate());
+        //cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_REVIEWS,"review");
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_TITLE,movie.getTitle());
+       // cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_TRAILER,"trailer");
+        cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
 
+        return mDb.insert(MovieContract.FavoriteMoviesEntry.TABLE_NAME, null, cv);
+    }
+
+    private boolean getMovie(int id){
+        String unreadquery="SELECT * FROM "+MovieContract.FavoriteMoviesEntry.TABLE_NAME +
+                " WHERE "+ MovieContract.FavoriteMoviesEntry.COLUMN_ID+"="+ id;
+
+        Cursor cursor=mDb.rawQuery(unreadquery, null);
+        if(cursor.getCount()>0)
+        {
+            return true;
+        }
+        else return false;
+    }
 
     private void configureRecyclerView(ArrayList videos) {
         trailerRV =(RecyclerView) findViewById(R.id.rv_trailer);
