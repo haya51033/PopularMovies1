@@ -2,6 +2,7 @@ package com.example.android.popularmovies.MyAPI;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.android.popularmovies.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -15,8 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiActivity extends AppCompatActivity{
 
     public static final String BASE_URL= "https://api.themoviedb.org/";
-    //TODO: Please assign a api key value:
-    private final String api_key= "a251c89afdfec4cfb13d71567d48f13a";
+    private final String api_key= BuildConfig.MY_MOVIE_DB_API_KEY;
 
     Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
