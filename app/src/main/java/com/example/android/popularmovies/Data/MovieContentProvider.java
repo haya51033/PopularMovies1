@@ -155,15 +155,6 @@ public class MovieContentProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
         return 0;
     }
-  /*  private Cursor getMovieId(Uri uri, String[] projection, String sortOrder) {
-        String movieId = MovieContract.FavoriteMoviesEntry.g
-        String popularid = DataContract.Popular.getPopularIdfromUri(uri);
-        String[] selectionArgs;
-        String selection;
-        selection = PopularSelection;
-        selectionArgs = new String[]{popularid};
-        return moviesDB.getReadableDatabase().query(DataContract.Popular.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
-    }*/
 
     @Nullable
     @Override
@@ -200,7 +191,6 @@ public class MovieContentProvider extends ContentProvider {
                 break;
             }
             case VIDEO_WITH_ID: {
-               // returnCursor = getFavourId(uri, projection, sortOrder);
                 break;
             }
             case REVIEWS: {
@@ -209,7 +199,6 @@ public class MovieContentProvider extends ContentProvider {
                 break;
             }
             case REVIEW_WITH_ID: {
-              //  returnCursor = getRatedID(uri, projection, sortOrder);
                 break;
             }
             default:
