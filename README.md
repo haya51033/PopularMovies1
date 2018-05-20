@@ -1,8 +1,9 @@
 # PopularMovies
-Please add a API KEY IN THIS PLACE:
+#TODO: Please assign a api key value:
 
-PopularMovies/app/src/main/java/com/example/android/popularmovies/MyAPI/ApiActivity.java
+add a API KEY IN (gradle.properties) file.
 
-Assigned it for public static final String api_key
+
+
 
 
