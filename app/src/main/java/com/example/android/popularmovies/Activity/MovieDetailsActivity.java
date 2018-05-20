@@ -31,7 +31,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
 /**
@@ -53,7 +52,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
     ArrayList<Reviews> Object2; ArrayList<TrailerResponceValue> Object3;
     ArrayList<ReviewsResponceValue> Object4; int movieID;
     RecyclerView trailerRV; RecyclerView reviewRV;
-    private SQLiteDatabase mDb, mDb1, mDb2;
 
     public ArrayList<Videos> trailerVideos= new ArrayList<>();
     public ArrayList<Reviews> movieReviews = new ArrayList<>();
@@ -69,8 +67,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         trailerRV.setLayoutManager(new LinearLayoutManager(this));
         reviewRV.setLayoutManager(new LinearLayoutManager(this));
 
-        MoviesDB dbHelper = new MoviesDB(this);
-        mDb = dbHelper.getWritableDatabase();
 
         Object = new ArrayList<>();
         Object1 = new ArrayList<>();
@@ -242,7 +238,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
             }
         });
     }
-    private long addNewMovie(Movie movie) {
+    private void addNewMovie(Movie movie) {
         ContentValues cv = new ContentValues();
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_ID,movie.getId());
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_BACKDROP_IMG,movie.getBackdropPath());
@@ -252,46 +248,74 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE,movie.getReleaseDate());
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_TITLE,movie.getTitle());
         cv.put(MovieContract.FavoriteMoviesEntry.COLUMN_VOTE_AVERAGE,movie.getVoteAverage());
-        return mDb.insert(MovieContract.FavoriteMoviesEntry.TABLE_NAME, null, cv);
+
+        Uri uri = getContentResolver().insert(MovieContract.FavoriteMoviesEntry.CONTENT_URI, cv);
+
+       /* if (uri != null)
+        {
+            Toast.makeText(getApplicationContext(),uri.toString(),Toast.LENGTH_LONG).show();
+        }*/
+
+       finish();
     }
 
 
-    private long addTrailers(int movie_id, ArrayList<Videos> videosList)
+    private void addTrailers(int movie_id, ArrayList<Videos> videosList)
     {
-        int i=0;
-        for(Videos v : videosList) {
+        ContentValues[] cvArr = new ContentValues[videosList.size()];
+        long insertCount = 0;
+        int i = 0;
+        for (Videos v : videosList) {
             ContentValues cv = new ContentValues();
             cv.put(MovieContract.VideosMovieEntry.COLUMN_VID, v.getId());
             cv.put(MovieContract.VideosMovieEntry.COLUMN_MOVIE, movie_id);
             cv.put(MovieContract.VideosMovieEntry.COLUMN_NAME,v.getName());
             cv.put(MovieContract.VideosMovieEntry.COLUMN_KEY,v.getKey());
-            mDb.insert(MovieContract.VideosMovieEntry.TABLE_NAME,null,cv);
-            i++;
+            cvArr[i++] = cv;
         }
-        return 1;
+
+        insertCount = getApplicationContext().getContentResolver()
+                .bulkInsert(MovieContract.VideosMovieEntry.CONTENT_URI, cvArr);
+        /*if (insertCount != 0)
+        {
+            Toast.makeText(getApplicationContext(),String.valueOf(insertCount),Toast.LENGTH_LONG).show();
+        }*/
     }
 
 
-    private long addReviews(int movie_id, ArrayList<Reviews> reviewsArrayList){
-        int i=0;
-        for(Reviews r : reviewsArrayList){
+    private void addReviews(int movie_id, ArrayList<Reviews> reviewsArrayList){
+        ContentValues[] cvArr = new ContentValues[reviewsArrayList.size()];
+        long insertCount = 0;
+        int i = 0;
+        for (Reviews r : reviewsArrayList) {
             ContentValues cv = new ContentValues();
             cv.put(MovieContract.ReviewsMovieEntry.COLUMN_RID, r.getId());
             cv.put(MovieContract.ReviewsMovieEntry.COLUMN_MOVIE,movie_id);
             cv.put(MovieContract.ReviewsMovieEntry.COLUMN_AUTHOR,r.getAuthor());
             cv.put(MovieContract.ReviewsMovieEntry.COLUMN_CONTENT, r.getContent());
-            mDb.insert(MovieContract.ReviewsMovieEntry.TABLE_NAME,null,cv);
-            i++;
+
+            cvArr[i++] = cv;
         }
-        return 1;
+        insertCount = getApplicationContext().getContentResolver()
+                .bulkInsert(MovieContract.ReviewsMovieEntry.CONTENT_URI, cvArr);
+       /* if (insertCount != 0)
+        {
+            Toast.makeText(getApplicationContext(),String.valueOf(insertCount),Toast.LENGTH_LONG).show();
+        }*/
     }
 
     private boolean getMovie(int id){
-        String unreadquery="SELECT * FROM "+MovieContract.FavoriteMoviesEntry.TABLE_NAME +
-                " WHERE "+ MovieContract.FavoriteMoviesEntry.COLUMN_ID+"="+ id;
+       /* String unreadquery="SELECT * FROM "+MovieContract.FavoriteMoviesEntry.TABLE_NAME +
+                " WHERE "+ MovieContract.FavoriteMoviesEntry.COLUMN_ID+"="+ id;*/
+      Cursor  cur =
+              getContentResolver().query(
+                      MovieContract.FavoriteMoviesEntry.CONTENT_URI,
+                      null,
+                      MovieContract.FavoriteMoviesEntry.COLUMN_ID + "='" + id + "'",
+                      null,
+                      MovieContract.FavoriteMoviesEntry.COLUMN_TITLE);
 
-        Cursor cursor=mDb.rawQuery(unreadquery, null);
-        if(cursor.getCount()>0)
+        if(cur.getCount()>0)
         {
             return true;
         }
@@ -300,11 +324,13 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
 
     public List<Videos> getAllTrailer(int movie_id){
 
-        String getVideos= "SELECT * FROM "+MovieContract.VideosMovieEntry.TABLE_NAME +
-                " WHERE "+ MovieContract.VideosMovieEntry.COLUMN_MOVIE+"="+ movie_id;
-        MoviesDB dbHelper = new MoviesDB(this);
-        mDb1 = dbHelper.getReadableDatabase();
-        Cursor cursor = mDb1.rawQuery(getVideos,null);
+        Cursor  cursor =
+                getContentResolver().query(
+                        MovieContract.VideosMovieEntry.CONTENT_URI,
+                        null,
+                        MovieContract.VideosMovieEntry.COLUMN_MOVIE + "='" + movie_id + "'",
+                        null,
+                        MovieContract.VideosMovieEntry.COLUMN_NAME);
 
         if(cursor.moveToFirst()){
             do
@@ -317,16 +343,21 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
                    trailerVideos.add(videosObj);
                 } while (cursor.moveToNext());
         }
-        mDb1.close();
+       // mDb1.close();
         return trailerVideos;
     }
 
     public List<Reviews> getAllReview(int movie_id){
-        String getReviews= "SELECT * FROM "+MovieContract.ReviewsMovieEntry.TABLE_NAME +
-                " WHERE "+ MovieContract.ReviewsMovieEntry.COLUMN_MOVIE+"="+ movie_id;
-        MoviesDB dbHelper = new MoviesDB(this);
-        mDb2 = dbHelper.getReadableDatabase();
-        Cursor cursor = mDb2.rawQuery(getReviews,null);
+       /* String getReviews= "SELECT * FROM "+MovieContract.ReviewsMovieEntry.TABLE_NAME +
+                " WHERE "+ MovieContract.ReviewsMovieEntry.COLUMN_MOVIE+"="+ movie_id;*/
+        Cursor  cursor =
+                getContentResolver().query(
+                        MovieContract.ReviewsMovieEntry.CONTENT_URI,
+                        null,
+                        MovieContract.ReviewsMovieEntry.COLUMN_MOVIE + "='" + movie_id + "'",
+                        null,
+                        null);
+
         if(cursor.moveToFirst()){
             do{
                 Reviews reviewsObject = new Reviews();
@@ -337,7 +368,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerAd
                 movieReviews.add(reviewsObject);
             }while (cursor.moveToNext());
         }
-        mDb2.close();
         return movieReviews;
     }
 
